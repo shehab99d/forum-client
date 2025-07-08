@@ -2,13 +2,40 @@ import { Link, NavLink } from "react-router-dom";
 import { FaBell, FaBars } from "react-icons/fa";
 import { useContext, useState } from "react";
 import Forumify from "../Forumify";
+import Swal from 'sweetalert2';
+
 import { AuthContext } from "../Router/Authentication/AuthContext";
 
 const Navbar = () => {
-    const { user } = useContext(AuthContext);
+    const { user, logout } = useContext(AuthContext);
+    console.log(user);
+
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleMenu = () => setIsOpen(!isOpen);
+
+    const handleLogout = async () => {
+        try {
+            await logout(); // Context থেকে আসা logout function
+            Swal.fire({
+                title: 'Logged out!',
+                text: 'You have been logged out successfully.',
+                icon: 'success',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Okay'
+            });
+        } catch (error) {
+            console.error(error);
+            Swal.fire({
+                title: 'Error!',
+                text: 'Logout failed. Please try again.',
+                icon: 'error',
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Try Again'
+            });
+        }
+    };
+
 
     const navLinks = (
         <>
@@ -78,15 +105,18 @@ const Navbar = () => {
                         <div className="dropdown dropdown-end">
                             <div tabIndex={0} role="button" className="avatar online cursor-pointer">
                                 <div className="w-10 rounded-full ring ring-yellow-400 ring-offset-base-100 ring-offset-2">
-                                    <img src={user.photo} alt="user" />
+                                    <img src={user.photoURL} alt="user" />
                                 </div>
                             </div>
                             <ul className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-200 rounded-box w-56">
                                 <li>
                                     <p className="text-sm font-bold text-yellow-400">{user.name}</p>
                                 </li>
+                                <li>
+                                    <p className="text-sm font-bold cursor-not-allowed text-yellow-400">Name: {user.displayName || null}</p>
+                                </li>
                                 <li><Link to="/dashboard">Dashboard</Link></li>
-                                <li><button>Logout</button></li>
+                                <li><button onClick={handleLogout}>Logout</button></li>
                             </ul>
                         </div>
                     )}
@@ -123,7 +153,7 @@ const Navbar = () => {
                                     </div>
                                     <p className="text-sm font-bold text-yellow-400">{user.name}</p>
                                     <Link to="/dashboard">Dashboard</Link>
-                                    <button>Logout</button>
+                                    <button onClick={handleLogout}>Logout</button>
                                 </div>
                             )}
                         </li>

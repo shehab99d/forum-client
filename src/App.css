@@ -1,2 +1,6 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+.text-gold {
+    @apply text-yellow-400;
+}

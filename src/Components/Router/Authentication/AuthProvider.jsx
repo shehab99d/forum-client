@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { AuthContext } from './AuthContext';
-import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
+import {
+    GoogleAuthProvider,
+    signInWithPopup,
+    signOut,
+    onAuthStateChanged,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    updateProfile
+}
+    from "firebase/auth";
 // import app from '../firebase/firebase.config'; // path ঠিকমতো adjust করো
 import { auth } from '../../Hooks/firebase.init';
 
@@ -17,6 +26,19 @@ const AuthProvider = ({ children }) => {
         return signInWithPopup(auth, googleProvider);
     };
 
+    const createUser = (email, password) => {
+        setLoading(true);
+        return createUserWithEmailAndPassword(auth, email, password)
+    };
+
+    const signInUser = (email, password) => {
+        setLoading(true);
+        return signInWithEmailAndPassword(auth, email, password)
+    };
+    const updateUserProfile = profileInfo => {
+        return updateProfile(auth.currentUser, profileInfo)
+    }
+
     // Logout
     const logout = () => {
         setLoading(true);
@@ -27,6 +49,8 @@ const AuthProvider = ({ children }) => {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, currentUser => {
             setUser(currentUser);
+            console.log(currentUser);
+
             setLoading(false);
         });
 
@@ -36,8 +60,11 @@ const AuthProvider = ({ children }) => {
     const authInfo = {
         user,
         loading,
+        logout,
+        createUser,
+        signInUser,
         googleSignIn,
-        logout
+        updateUserProfile,
     };
 
     return (
