@@ -7,6 +7,7 @@ import PrivateRoute from "./PrivateRoute";
 import MyProfile from "../Pages/Dashboard/MyProfile";
 import AddPost from "../Pages/Dashboard/AddPost";
 import MyPost from "../Pages/Dashboard/MyPost";
+import MemberShip from "../Pages/MemberShip/MemberShip";
 
 export const router = createBrowserRouter([
     {
@@ -21,6 +22,10 @@ export const router = createBrowserRouter([
                 path: 'join-us',
                 element: <JoinUs></JoinUs>
             },
+            {
+                path: 'membership',
+                element: <MemberShip></MemberShip>
+            }
         ]
     },
     {

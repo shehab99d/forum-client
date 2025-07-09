@@ -7,13 +7,11 @@ import {
     onAuthStateChanged,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
-    updateProfile
-}
-    from "firebase/auth";
-// import app from '../firebase/firebase.config'; // path ঠিকমতো adjust করো
+    updateProfile,
+    getIdToken
+} from "firebase/auth";
 import { auth } from '../../Hooks/firebase.init';
 
-// const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
 const AuthProvider = ({ children }) => {
@@ -28,29 +26,39 @@ const AuthProvider = ({ children }) => {
 
     const createUser = (email, password) => {
         setLoading(true);
-        return createUserWithEmailAndPassword(auth, email, password)
+        return createUserWithEmailAndPassword(auth, email, password);
     };
 
     const signInUser = (email, password) => {
         setLoading(true);
-        return signInWithEmailAndPassword(auth, email, password)
+        return signInWithEmailAndPassword(auth, email, password);
     };
+
     const updateUserProfile = profileInfo => {
-        return updateProfile(auth.currentUser, profileInfo)
-    }
+        return updateProfile(auth.currentUser, profileInfo);
+    };
 
     // Logout
     const logout = () => {
         setLoading(true);
+        localStorage.removeItem('authToken'); // token clear on logout
         return signOut(auth);
     };
 
     // Observe Auth State
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, currentUser => {
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             setUser(currentUser);
-            console.log(currentUser);
-
+            if (currentUser) {
+                // Get JWT token from Firebase currentUser
+                const token = await currentUser.getIdToken();
+                // Save token in localStorage
+                localStorage.setItem('authToken', token);
+                console.log('Firebase JWT Token:', token);
+            } else {
+                localStorage.removeItem('authToken');
+                console.log('No user logged in, token removed.');
+            }
             setLoading(false);
         });
 
