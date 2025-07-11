@@ -11,33 +11,33 @@ import Loading from '../../../Loading/Loading';
 const AddPost = () => {
     const { register, handleSubmit, reset } = useForm();
     const { user } = useAuth();
-    const axiosSecure = useAxiosSecure;
+    const axiosSecure = useAxiosSecure();
     const queryClient = useQueryClient();
     const navigate = useNavigate();
 
     const [postLimitReached, setPostLimitReached] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const checkPostLimit = async () => {
-            try {
-                const res = await axiosSecure.get(`/post-count?email=${user?.email}`);
-                const count = res.data.count;
-                const isMember = res.data.isMember;
-                if (!isMember && count >= 5) {
-                    setPostLimitReached(true);
-                }
-            } catch (error) {
-                console.error('Error fetching post count:', error);
-            } finally {
-                setLoading(false);
+    const checkPostLimit = async () => {
+        try {
+            const res = await axiosSecure.get(`/post-count?email=${user?.email}`);
+            const count = res.data.count;
+            const isMember = res.data.isMember;
+            if (!isMember && count >= 5) {
+                setPostLimitReached(true);
             }
-        };
+        } catch (error) {
+            console.error('Error fetching post count:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         if (user?.email) {
             checkPostLimit();
         }
-    }, [user, axiosSecure]);
+    }, [user]);
 
     const onSubmit = async (data) => {
         const postData = {
@@ -64,6 +64,7 @@ const AddPost = () => {
                 });
                 reset();
                 queryClient.invalidateQueries(['posts']);
+                await checkPostLimit(); // ✅ post count update করো
             }
         } catch (error) {
             Swal.fire({
@@ -73,6 +74,7 @@ const AddPost = () => {
             });
         }
     };
+
 
     if (loading) return <Loading />;
 

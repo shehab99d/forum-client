@@ -8,6 +8,8 @@ import MyProfile from "../Pages/Dashboard/MyProfile";
 import AddPost from "../Pages/Dashboard/AddPost";
 import MyPost from "../Pages/Dashboard/MyPost";
 import MemberShip from "../Pages/MemberShip/MemberShip";
+import Comment from "../Pages/Comment";
+import PostDetails from "../Pages/PostDetails/PostDetails";
 
 export const router = createBrowserRouter([
     {
@@ -25,6 +27,14 @@ export const router = createBrowserRouter([
             {
                 path: 'membership',
                 element: <MemberShip></MemberShip>
+            },
+            {
+                path: 'post/:id',
+                element: <Comment></Comment>
+            },
+            {
+                path: 'postDetails/:postId',
+                element: <PostDetails></PostDetails>
             }
         ]
     },

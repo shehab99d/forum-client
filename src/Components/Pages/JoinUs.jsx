@@ -1,89 +1,107 @@
+// src/Pages/Authentication/JoinUs.jsx
 import { useContext, useState } from 'react';
 import { AuthContext } from '../Router/Authentication/AuthContext';
 import { FcGoogle } from 'react-icons/fc';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { useLocation } from 'react-router';
+// import useAxiosSecure from '../../Hooks/useAxiosSecure'; // ✅ path check
+import { updateProfile } from 'firebase/auth';
+import useAxiosSecure from '../Hooks/useAxiosSecure';
 
 const JoinUs = () => {
     const [showLogin, setShowLogin] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
-
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
     const [loginEmail, setLoginEmail] = useState('');
     const [loginPassword, setLoginPassword] = useState('');
 
-    const { googleSignIn, createUser, signInUser } = useContext(AuthContext);
+    const { googleSignIn, createUser, signInUser, updateUserProfile } = useContext(AuthContext);
+    const axiosSecure = useAxiosSecure();
     const navigate = useNavigate();
     const location = useLocation();
-    
     const from = location.state?.from?.pathname || '/';
 
+    // ✅ Save user to DB
+    const saveUserToDB = async (user) => {
+        const userInfo = {
+            name: user.displayName,
+            email: user.email,
+            photo: user.photoURL,
+            role: 'user',
+            isMember: false
+        };
+
+        try {
+            const res = await axiosSecure.post('/users', userInfo);
+            console.log("✅ User saved to DB:", res.data);
+        } catch (error) {
+            console.error("❌ DB save failed:", error.message);
+        }
+    };
+
+    // ✅ Get token from backend and save
+    const fetchAndStoreToken = async (email, password) => {
+        try {
+            const res = await axiosSecure.post('/login', { email, password });
+            const token = res.data.token;
+            localStorage.setItem('authToken', token);
+            console.log("✅ Token saved");
+        } catch (err) {
+            console.error("❌ Token fetch failed:", err.message);
+        }
+    };
 
     // ✅ Google Sign In
     const handleGoogleLogin = async () => {
         try {
-            await googleSignIn();
-            Swal.fire({
-                title: 'Login Successful',
-                text: 'You have been logged in successfully.',
-                icon: 'success',
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'Okay',
-            });
+            const result = await googleSignIn();
+            await saveUserToDB(result.user);
+            await fetchAndStoreToken(result.user.email, "firebase_google"); // dummy password
+            Swal.fire({ icon: 'success', title: 'Login Successful' });
             navigate(from, { replace: true });
         } catch (error) {
             console.error(error);
-            Swal.fire({
-                title: 'Error!',
-                text: 'Google login failed.',
-                icon: 'error',
-            });
+            Swal.fire({ icon: 'error', title: 'Google login failed' });
         }
     };
 
-    // ✅ Register new user
+    // ✅ Register User
     const handleRegister = async (e) => {
         e.preventDefault();
         try {
-            await createUser(email, password);
-            Swal.fire({
-                title: 'Account Created!',
-                text: 'Your account has been created successfully.',
-                icon: 'success',
+            const result = await createUser(email, password);
+
+            // ✅ Update user profile
+            await updateUserProfile({
+                displayName: name,
+                photoURL: selectedFile ? URL.createObjectURL(selectedFile) : ''
             });
+
+            result.user.displayName = name;
+            result.user.photoURL = selectedFile ? URL.createObjectURL(selectedFile) : '';
+
+            await saveUserToDB(result.user);
+            await fetchAndStoreToken(email, password);
+            Swal.fire({ icon: 'success', title: 'Account Created!' });
             navigate(from, { replace: true });
         } catch (err) {
             console.error(err);
-            Swal.fire({
-                title: 'Registration Failed',
-                text: err.message || 'Something went wrong.',
-                icon: 'error',
-            });
+            Swal.fire({ icon: 'error', title: 'Registration Failed', text: err.message });
         }
     };
 
-    // ✅ Sign in user
+    // ✅ Login User
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
             await signInUser(loginEmail, loginPassword);
-            Swal.fire({
-                title: 'Login Successful',
-                text: 'Welcome back!',
-                icon: 'success',
-            });
+            await fetchAndStoreToken(loginEmail, loginPassword);
+            Swal.fire({ icon: 'success', title: 'Login Successful' });
             navigate(from, { replace: true });
         } catch (err) {
-            console.error(err);
-            Swal.fire({
-                title: 'Login Failed',
-                text: err.message || 'Invalid credentials.',
-                icon: 'error',
-            });
+            Swal.fire({ icon: 'error', title: 'Login Failed', text: err.message });
         }
     };
 
@@ -95,6 +113,7 @@ const JoinUs = () => {
     return (
         <div className="lg:py-0 py-36 md:py-44 flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-100 to-blue-300 px-4">
             <div className="relative flex flex-col md:flex-row w-full max-w-5xl h-auto md:h-[600px] rounded-2xl shadow-xl overflow-hidden bg-white">
+
                 {/* Registration Form */}
                 {!showLogin && (
                     <div className="w-full md:w-1/2 p-10">
@@ -104,7 +123,6 @@ const JoinUs = () => {
                             <input onChange={(e) => setEmail(e.target.value)} type="email" required placeholder="Email" className="input w-full bg-white text-black border border-gray-300" />
                             <input onChange={(e) => setPassword(e.target.value)} type="password" required placeholder="Password" className="input w-full bg-white text-black border border-gray-300" />
 
-                            {/* File Upload */}
                             <div>
                                 <label className="block mb-1 text-sm font-medium text-gray-700">Upload Profile Picture</label>
                                 <input
@@ -123,8 +141,8 @@ const JoinUs = () => {
 
                             <button type="submit" className="btn btn-primary w-full">Register</button>
                         </form>
-                        <div className="divider text-black before:bg-black after:bg-black">OR</div>
 
+                        <div className="divider text-black before:bg-black after:bg-black">OR</div>
                         <button
                             onClick={handleGoogleLogin}
                             className="btn w-full border border-gray-300 bg-white text-black hover:bg-gray-100 rounded-full"
@@ -143,6 +161,7 @@ const JoinUs = () => {
                             <input onChange={(e) => setLoginPassword(e.target.value)} required type="password" placeholder="Password" className="input w-full bg-white text-black border border-gray-300" />
                             <button type="submit" className="btn btn-primary w-full">Login</button>
                         </form>
+
                         <div className="divider text-black before:bg-black after:bg-black">OR</div>
                         <button
                             onClick={handleGoogleLogin}
@@ -150,6 +169,7 @@ const JoinUs = () => {
                         >
                             <FcGoogle className="text-2xl mr-2" /> Continue with Google
                         </button>
+
                         <p className="mt-6 text-black text-center text-sm">
                             Don't have an account?{' '}
                             <button
@@ -163,7 +183,7 @@ const JoinUs = () => {
                 )}
 
                 {/* Right Panel */}
-                <div className={`w-full md:w-1/2 p-10 flex flex-col justify-center items-center ${showLogin ? 'bg-blue-600' : 'bg-blue-600'} text-white rounded-b-2xl md:rounded-none md:rounded-l-2xl`}>
+                <div className={`w-full md:w-1/2 p-10 flex flex-col justify-center items-center bg-blue-600 text-white rounded-b-2xl md:rounded-none md:rounded-l-2xl`}>
                     {showLogin ? (
                         <>
                             <h2 className="text-3xl font-bold mb-4 text-center">Don't have an account?</h2>
