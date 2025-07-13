@@ -5,14 +5,32 @@ import Forumify from "../Forumify";
 import Swal from 'sweetalert2';
 
 import { AuthContext } from "../Router/Authentication/AuthContext";
+import useAdmin from "../Hooks/useAdmin";
+import useAxiosSecure from "../Hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
 
 const Navbar = () => {
     const { user, logout } = useContext(AuthContext);
     console.log(user);
 
+    const [isAdmin, isAdminLoading] = useAdmin();
+
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleMenu = () => setIsOpen(!isOpen);
+
+    const axiosSecure = useAxiosSecure();
+
+    const { data: announcements = [] } = useQuery({
+        queryKey: ['announcements'],
+        queryFn: async () => {
+            const res = await axiosSecure.get('/announcements');
+            return res.data
+        }
+    });
+
+    const announcementsCount = announcements.length;
+
 
     const handleLogout = async () => {
         try {
@@ -90,7 +108,13 @@ const Navbar = () => {
                     {/* Notification Bell */}
                     <div className="relative">
                         <FaBell className="text-xl cursor-pointer hover:text-yellow-400 transition" />
-                        <div className="badge badge-error badge-xs absolute -top-1 -right-1"></div>
+                        {
+                            announcementsCount > 0 && (
+                                <div className="badge badge-error badge-xs absolute -top-1 -right-1">
+                                    {announcementsCount}
+                                </div>
+                            )
+                        }
                     </div>
 
                     {/* Auth Buttons */}
@@ -116,6 +140,10 @@ const Navbar = () => {
                                     <p className="text-sm font-bold cursor-not-allowed text-yellow-400">Name: {user.displayName || null}</p>
                                 </li>
                                 <li><Link to="/dashboard">Dashboard</Link></li>
+                                {/* <li><Link to="/admin-dashboard">Admin Dashboard</Link></li> */}
+                                {
+                                    !isAdminLoading && isAdmin && (<li><Link to="/admin">Admin Dashboard</Link></li>)
+                                }
                                 <li><button onClick={handleLogout}>Logout</button></li>
                             </ul>
                         </div>
@@ -153,6 +181,9 @@ const Navbar = () => {
                                     </div>
                                     <p className="text-sm font-bold text-yellow-400">{user.name}</p>
                                     <Link to="/dashboard">Dashboard</Link>
+                                    {
+                                        !isAdminLoading && isAdmin && (<Link to="/admin">Admin Dashboard</Link>)
+                                    }
                                     <button onClick={handleLogout}>Logout</button>
                                 </div>
                             )}

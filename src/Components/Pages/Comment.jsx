@@ -15,6 +15,34 @@ const Comment = () => {
   const [reported, setReported] = useState({});
   const [feedback, setFeedback] = useState({});
 
+  const handleReport = async (commentId) => {
+    const reason = feedback[commentId];
+    const comment = comments.find(c => c._id === commentId);
+
+    if (!reason || !comment) return;
+
+    const reportData = {
+      postId,
+      commentId: comment._id,
+      commenterEmail: comment.commenterEmail,
+      commentText: comment.commentText,
+      reason,
+      reportedAt: new Date(),
+    };
+
+    try {
+      const res = await axiosSecure.post('/reported-comments', reportData);
+      if (res.data.insertedId) {
+        setReported(prev => ({ ...prev, [commentId]: true }));
+      }
+    } catch (error) {
+      console.error('❌ Report failed:', error);
+    }
+  };
+
+
+
+
   useEffect(() => {
     const fetchComments = async () => {
       try {
@@ -33,9 +61,29 @@ const Comment = () => {
     setFeedback((prev) => ({ ...prev, [commentId]: value }));
   };
 
-  const handleReport = (commentId) => {
-    setReported((prev) => ({ ...prev, [commentId]: true }));
-  };
+
+  useEffect(() => {
+    const fetchReported = async () => {
+      try {
+        const res = await axiosSecure.get(`/reported-comments/${postId}`);
+        const reportedMap = {};
+        res.data.forEach(id => {
+          reportedMap[id] = true;
+        });
+        setReported(reportedMap);
+      } catch (err) {
+        console.error('Error fetching reported comments:', err);
+      }
+    };
+
+    if (postId) {
+      fetchReported(); // ✅ এটি যথেষ্ট
+    }
+  }, [axiosSecure, postId]);
+
+
+
+
 
   return (
     <div className="bg-white p-6 lg:my-52 rounded-2xl shadow-lg mt-20 max-w-6xl mx-auto w-full">
@@ -89,16 +137,16 @@ const Comment = () => {
                   <button
                     onClick={() => handleReport(c._id)}
                     className={`btn btn-sm w-full flex items-center gap-1 justify-center 
-                      ${reported[c._id] ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600 text-white'}
-                    `}
+    ${reported[c._id] ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600 text-white'}
+  `}
                     disabled={!feedback[c._id] || reported[c._id]}
                   >
                     <FaFlag className='text-red-500' />
-                    
                     <div className='text-black'>
                       {reported[c._id] ? 'Reported' : 'Report'}
                     </div>
                   </button>
+
                 </td>
               </tr>
             ))}

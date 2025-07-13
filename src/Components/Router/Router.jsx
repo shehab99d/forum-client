@@ -10,6 +10,15 @@ import MyPost from "../Pages/Dashboard/MyPost";
 import MemberShip from "../Pages/MemberShip/MemberShip";
 import Comment from "../Pages/Comment";
 import PostDetails from "../Pages/PostDetails/PostDetails";
+import SinglePost from "../Pages/SinglePost";
+import AdminDashboard from "../Pages/AdminDashboard/AdminDashboard";
+import ErrorPage from "../../ErrorPage";
+import AdminRoute from "../Pages/AdminRoutes";
+import AdminOnly from "../Pages/AdminDashboard/AdminOnly";
+import ManageUser from "../Pages/AdminDashboard/ManageUser";
+import MakeAnnouncement from "../Pages/AdminDashboard/MakeAnnouncement";
+import Setting from "../Pages/AdminDashboard/Setting";
+// import Payment from "../../Payment";
 
 export const router = createBrowserRouter([
     {
@@ -26,15 +35,23 @@ export const router = createBrowserRouter([
             },
             {
                 path: 'membership',
-                element: <MemberShip></MemberShip>
+                element: <PrivateRoute>
+                    <MemberShip></MemberShip>
+                </PrivateRoute>
             },
             {
                 path: 'post/:id',
-                element: <Comment></Comment>
+                element: <PrivateRoute>
+                    <Comment></Comment>
+                </PrivateRoute>
             },
             {
                 path: 'postDetails/:postId',
                 element: <PostDetails></PostDetails>
+            },
+            {
+                path: 'singlePost/:id',
+                element: <SinglePost></SinglePost>
             }
         ]
     },
@@ -57,5 +74,33 @@ export const router = createBrowserRouter([
                 element: <MyPost></MyPost>
             }
         ]
+    },
+    {
+        path: 'admin',
+        element: <AdminRoute>
+            <AdminDashboard></AdminDashboard>
+        </AdminRoute>,
+        children: [
+            {
+                path: 'admin-dashboard',
+                element: <AdminOnly></AdminOnly>
+            },
+            {
+                path: 'manage-user',
+                element: <ManageUser></ManageUser>
+            },
+            {
+                path: 'make/announcement',
+                element: <MakeAnnouncement></MakeAnnouncement>
+            },
+            {
+                path: 'settings',
+                element: <Setting></Setting>
+            }
+        ]
+    },
+    {
+        path: '*',
+        element: <ErrorPage></ErrorPage>
     }
 ])

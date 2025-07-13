@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import useAxiosSecure from '../../Hooks/useAxiosSecure';
-import useAuth from '../../hooks/useAuth';  // auth hook import
+import useAuth from '../../Hooks/useAuth';
+// import useAuth from '../../hooks/useAuth';  // auth hook import
 
 const PostDetails = () => {
   const { postId } = useParams();

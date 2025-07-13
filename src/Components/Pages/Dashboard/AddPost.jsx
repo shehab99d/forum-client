@@ -1,12 +1,11 @@
-// src/Pages/Dashboard/AddPost.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
-import useAuth from '../../hooks/useAuth';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import useAxiosSecure from '../../Hooks/useAxiosSecure';
 import Loading from '../../../Loading/Loading';
+import useAuth from '../../Hooks/useAuth';
 
 const AddPost = () => {
     const { register, handleSubmit, reset } = useForm();
@@ -152,8 +151,12 @@ const AddPost = () => {
                     </div>
 
                     {/* Submit */}
-                    <button type="submit" className="btn bg-yellow-600 hover:bg-yellow-700 text-white font-semibold w-full py-3 rounded-lg shadow-lg mt-4 transition-transform hover:scale-[1.02] duration-300">
-                        🚀 Submit Post
+                    <button
+                        type="submit"
+                        className="relative group w-full py-3 rounded-lg mt-4 overflow-hidden bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-semibold shadow-lg transition-transform hover:scale-105"
+                    >
+                        <span className="absolute inset-0 w-0 bg-white opacity-10 group-hover:w-full transition-all duration-300"></span>
+                         Submit Post
                     </button>
                 </form>
             </div>

@@ -1,20 +1,39 @@
 import React, { useEffect, useState } from 'react';
+// import useAxiosSecure from '../../Hooks/useAxiosSecure';
+import useAuth from '../../Hooks/useAuth';
 import useAxiosSecure from '../../Hooks/useAxiosSecure';
-import useAuth from '../../Hooks/useAuth'; // তোমার Auth hook
 
 const MyProfile = () => {
   const { user } = useAuth();
+
+
+  // console.log(user.photoURL);
+
   const axiosSecure = useAxiosSecure();
 
   const [recentPosts, setRecentPosts] = useState([]);
+  const [dbUser, setDbUser] = useState(null); // এইখানে full user info রাখবো
   const [loading, setLoading] = useState(true);
 
+  // Step 1: DB user fetch (including isMember, role)
+  useEffect(() => {
+    if (user?.email) {
+      axiosSecure.get(`/users/${user.email}`)
+        .then(res => {
+          setDbUser(res.data);
+          // console.log(setDbUser);
+
+        })
+        .catch(err => console.error('User info fetch failed', err));
+    }
+  }, [user, axiosSecure]);
+
+  // Step 2: Recent posts fetch
   useEffect(() => {
     if (!user?.email) return;
 
     const fetchPosts = async () => {
       try {
-        // ধরছি তোমার backend এ posts fetch এর জন্য এই API আছে, যেটা ইউজার email দিয়ে filter করবে
         const response = await axiosSecure.get(`/posts?authorEmail=${user.email}&limit=3`);
         setRecentPosts(response.data || []);
       } catch (error) {
@@ -28,13 +47,14 @@ const MyProfile = () => {
   }, [user, axiosSecure]);
 
   // Badge logic
-  // Gold badge যদি user.role === 'member' হয়, নাহলে Bronze
-  const isGold = user?.role === 'member';
-  const isBronze = !isGold; // register হওয়ালাই Bronze
+  const isGold = dbUser?.isMember === true;
+  const isBronze = !isGold;
+
+
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center bg-no-repeat p-6"
+      className="min-h-screen bg-cover bg-center bg-no-repeat rounded-2xl p-6"
       style={{ backgroundImage: `url('/my-profile-bg.jpg')` }}
     >
       <div className="max-w-4xl mx-auto bg-black bg-opacity-60 rounded-xl p-8 text-white shadow-lg">
@@ -46,14 +66,14 @@ const MyProfile = () => {
             className="w-28 h-28 rounded-full border-4 border-yellow-400 object-cover"
           />
           <div>
-            <h2 className="text-3xl font-bold">{user?.displayName || 'No Name'}</h2>
+            <h2 className="text-3xl font-bold">{user?.displayName || dbUser?.name || 'No Name'}</h2>
             <p className="text-gray-300">{user?.email}</p>
 
             {/* Badges */}
             <div className="mt-4 flex gap-3">
               {isGold && (
                 <span className="badge py-4 bg-yellow-400 text-black px-4 rounded-full flex items-center gap-2">
-                  <img src="/gold-badge-icon.png" alt="Gold Badge" className="w-5 h-5" />
+                  <img src="/gold-badge.png" alt="Gold Badge" className="w-5 h-5" />
                   Gold Member
                 </span>
               )}
