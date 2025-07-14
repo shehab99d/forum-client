@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import useAxiosSecure from '../../Hooks/useAxiosSecure';
 import useAuth from '../../Hooks/useAuth';
-// import useAuth from '../../hooks/useAuth';  // auth hook import
+import Swal from 'sweetalert2';
 
 const PostDetails = () => {
   const { postId } = useParams();
   const axiosSecure = useAxiosSecure();
-  const { user } = useAuth();  // logged in user info
+  const { user } = useAuth();
 
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
@@ -44,7 +44,6 @@ const PostDetails = () => {
     e.preventDefault();
     if (!commentText.trim()) return;
 
-    // user থেকে নিয়ে আসলাম
     const commenter = {
       commenterName: user?.displayName || "Anonymous",
       commenterEmail: user?.email || "unknown@example.com",
@@ -69,15 +68,36 @@ const PostDetails = () => {
   };
 
   const handleDeleteComment = async (commentId) => {
-    if (!window.confirm("Are you sure you want to delete this comment?")) return;
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    });
 
-    try {
-      const res = await axiosSecure.delete(`/comments/${commentId}`);
-      if (res.data.deletedCount > 0) {
-        setComments(prev => prev.filter(c => c._id !== commentId));
+    if (result.isConfirmed) {
+      try {
+        const res = await axiosSecure.delete(`/comments/${commentId}`);
+        if (res.data.deletedCount > 0) {
+          setComments(prev => prev.filter(c => c._id !== commentId));
+          Swal.fire(
+            'Deleted!',
+            'Your comment has been deleted.',
+            'success'
+          );
+        }
+      } catch (error) {
+        console.error("Failed to delete comment:", error);
+        Swal.fire(
+          'Error!',
+          'Failed to delete the comment. Please try again later.',
+          'error'
+        );
       }
-    } catch (error) {
-      console.error("Failed to delete comment:", error);
     }
   };
 
@@ -88,7 +108,9 @@ const PostDetails = () => {
       {/* Post Section */}
       <h1 className="text-3xl font-bold mb-4 text-black">{post.title}</h1>
       <p className="text-gray-800 mb-4 whitespace-pre-wrap">{post.description}</p>
-      <p className="mb-6 text-sm font-semibold text-gray-600">Tags: <span className="text-blue-600">#{post.tag}</span></p>
+      <p className="mb-6 text-sm font-semibold text-gray-600">
+        Tags: <span className="text-blue-600">#{post.tag}</span>
+      </p>
 
       <hr className="border-gray-300 mb-8" />
 
@@ -125,7 +147,10 @@ const PostDetails = () => {
       ) : (
         <div className="space-y-6">
           {comments.map((comment) => (
-            <div key={comment._id} className="flex gap-4 p-4 bg-gray-100 rounded-lg shadow-sm relative">
+            <div
+              key={comment._id}
+              className="flex gap-4 p-4 bg-gray-100 rounded-lg shadow-sm relative group hover:bg-gray-200 transition-colors duration-300"
+            >
               <img
                 src={comment.commenterImage}
                 alt={comment.commenterName}
@@ -140,12 +165,13 @@ const PostDetails = () => {
                 </div>
                 <p className="text-gray-800 whitespace-pre-wrap">{comment.commentText}</p>
               </div>
-              {/* Delete Button, শুধু comment করা user এর জন্য দেখাবে */}
+              {/* Delete Button, only for comment owner */}
               {user?.email === comment.commenterEmail && (
                 <button
                   onClick={() => handleDeleteComment(comment._id)}
-                  className="absolute top-2 right-2 text-red-600 hover:text-red-800 font-bold"
+                  className="absolute top-2 right-2 text-red-600 hover:text-red-800 font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300 lg:pt-8"
                   title="Delete Comment"
+                  aria-label="Delete Comment"
                 >
                   &#x2716;
                 </button>

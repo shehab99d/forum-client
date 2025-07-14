@@ -4,6 +4,12 @@ import { useContext, useState } from "react";
 import Forumify from "../Forumify";
 import Swal from 'sweetalert2';
 
+import { MdDashboard } from "react-icons/md";
+import { FaUserCircle } from "react-icons/fa";
+import { RiAdminLine } from "react-icons/ri";
+import { FiLogOut } from "react-icons/fi";
+
+
 import { AuthContext } from "../Router/Authentication/AuthContext";
 import useAdmin from "../Hooks/useAdmin";
 import useAxiosSecure from "../Hooks/useAxiosSecure";
@@ -137,15 +143,36 @@ const Navbar = () => {
                                     <p className="text-sm font-bold text-yellow-400">{user.name}</p>
                                 </li>
                                 <li>
-                                    <p className="text-sm font-bold cursor-not-allowed text-yellow-400">Name: {user.displayName || null}</p>
+                                    <p className="text-sm font-bold cursor-not-allowed text-yellow-400">
+                                        Name: {user.displayName || null}
+                                    </p>
                                 </li>
-                                <li><Link to="/dashboard">Dashboard</Link></li>
-                                {/* <li><Link to="/admin-dashboard">Admin Dashboard</Link></li> */}
+                                <li>
+                                    <Link to="/dashboard">
+                                        <MdDashboard className="text-lg" /> Dashboard
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/about-me">
+                                        <FaUserCircle className="text-lg" /> About Me
+                                    </Link>
+                                </li>
                                 {
-                                    !isAdminLoading && isAdmin && (<li><Link to="/admin">Admin Dashboard</Link></li>)
+                                    !isAdminLoading && isAdmin && (
+                                        <li>
+                                            <Link to="/admin">
+                                                <RiAdminLine className="text-lg" /> Admin Dashboard
+                                            </Link>
+                                        </li>
+                                    )
                                 }
-                                <li><button onClick={handleLogout}>Logout</button></li>
+                                <li>
+                                    <button onClick={handleLogout}>
+                                        <FiLogOut className="text-lg" /> Logout
+                                    </button>
+                                </li>
                             </ul>
+
                         </div>
                     )}
                 </div>

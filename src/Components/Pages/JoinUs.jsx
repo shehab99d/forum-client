@@ -5,11 +5,9 @@ import { FcGoogle } from 'react-icons/fc';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Swal from 'sweetalert2';
 // import useAxiosSecure from '../../Hooks/useAxiosSecure'; // ✅ path check
-import { updateProfile } from 'firebase/auth';
 import useAxiosSecure from '../Hooks/useAxiosSecure';
 
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { storage } from '../Hooks/firebase.init'; // ✅ ইমপোর্ট সঠিক করো
+
 
 
 const JoinUs = () => {
@@ -97,44 +95,6 @@ const JoinUs = () => {
             Swal.fire({ icon: 'error', title: 'Registration Failed', text: err.message });
         }
     };
-
-
-    // const handleRegister = async (e) => {
-    //     e.preventDefault();
-    //     try {
-    //         const result = await createUser(email, password);
-
-    //         // 🔁 Wait 1-2 seconds to ensure auth.currentUser is available
-    //         await new Promise(resolve => setTimeout(resolve, 1000));
-
-    //         let photoURL = '';
-    //         if (selectedFile) {
-    //             const fileRef = ref(storage, `profilePictures/${Date.now()}-${selectedFile.name}`);
-    //             await uploadBytes(fileRef, selectedFile);
-    //             photoURL = await getDownloadURL(fileRef);
-    //         }
-
-    //         // ✅ Call your context function now
-    //         await updateUserProfile({
-    //             displayName: name,
-    //             photoURL: photoURL
-    //         });
-
-    //         result.user.displayName = name;
-    //         result.user.photoURL = photoURL;
-
-    //         await saveUserToDB(result.user);
-    //         await fetchAndStoreToken(email, password);
-
-    //         Swal.fire({ icon: 'success', title: 'Account Created!' });
-    //         navigate(from, { replace: true });
-
-    //     } catch (err) {
-    //         console.error(err);
-    //         Swal.fire({ icon: 'error', title: 'Registration Failed', text: err.message });
-    //     }
-    // };
-
 
 
 

@@ -18,6 +18,7 @@ import AdminOnly from "../Pages/AdminDashboard/AdminOnly";
 import ManageUser from "../Pages/AdminDashboard/ManageUser";
 import MakeAnnouncement from "../Pages/AdminDashboard/MakeAnnouncement";
 import Setting from "../Pages/AdminDashboard/Setting";
+import AboutMe from "../Pages/AboutMe";
 // import Payment from "../../Payment";
 
 export const router = createBrowserRouter([
@@ -52,6 +53,10 @@ export const router = createBrowserRouter([
             {
                 path: 'singlePost/:id',
                 element: <SinglePost></SinglePost>
+            },
+            {
+                path: 'about-me',
+                element: <AboutMe></AboutMe>
             }
         ]
     },
