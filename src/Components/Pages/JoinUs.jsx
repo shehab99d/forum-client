@@ -37,7 +37,7 @@ const JoinUs = () => {
 
         try {
             const res = await axiosSecure.post('/users', userInfo);
-            console.log("✅ User saved to DB:", res.data);
+            // console.log("✅ User saved to DB:", res.data);
         } catch (error) {
             console.error("❌ DB save failed:", error.message);
         }
@@ -49,7 +49,7 @@ const JoinUs = () => {
             const res = await axiosSecure.post('/login', { email, password });
             const token = res.data.token;
             localStorage.setItem('authToken', token);
-            console.log("✅ Token saved");
+            // console.log("✅ Token saved");
         } catch (err) {
             console.error("❌ Token fetch failed:", err.message);
         }
@@ -80,7 +80,7 @@ const JoinUs = () => {
                 displayName: name,
                 photoURL: selectedFile ? URL.createObjectURL(selectedFile) : ''
             });
-            console.log(updateUserProfile);
+            // console.log(updateUserProfile);
 
 
             result.user.displayName = name;

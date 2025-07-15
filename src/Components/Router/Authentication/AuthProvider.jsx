@@ -54,10 +54,10 @@ const AuthProvider = ({ children }) => {
                 const token = await currentUser.getIdToken();
                 // Save token in localStorage
                 localStorage.setItem('authToken', token);
-                console.log('Firebase JWT Token:', token);
+                // console.log('Firebase JWT Token:', token);
             } else {
                 localStorage.removeItem('authToken');
-                console.log('No user logged in, token removed.');
+                // console.log('No user logged in, token removed.');
             }
             setLoading(false);
         });

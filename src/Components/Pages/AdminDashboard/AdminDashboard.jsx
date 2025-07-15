@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { FaUsers, FaHome, FaCogs, FaBars, FaTimes, FaBullhorn } from 'react-icons/fa';
+import { FaUsers, FaHome, FaCogs, FaBars, FaTimes, FaBullhorn, FaUserCircle } from 'react-icons/fa';
 import Forumify from '../../Forumify';
 import useAxiosSecure from '../../Hooks/useAxiosSecure';
 
@@ -65,40 +65,49 @@ const AdminDashboard = () => {
 
                 <nav className="space-y-6">
                     <NavLink to="admin-dashboard" onClick={() => setSidebarOpen(false)} className={({ isActive }) =>
-                        `flex items-center gap-3 px-2 py-1 rounded-md transition duration-200 ${
-                            isActive
-                                ? 'text-yellow-400 border-l-4 border-yellow-400 bg-[#1a1a1a]'
-                                : 'text-gray-300 hover:text-yellow-400'
+                        `flex items-center gap-3 px-2 py-1 rounded-md transition duration-200 ${isActive
+                            ? 'text-yellow-400 border-l-4 border-yellow-400 bg-[#1a1a1a]'
+                            : 'text-gray-300 hover:text-yellow-400'
                         }`
                     }>
                         <FaHome /> Dashboard
                     </NavLink>
 
                     <NavLink to="manage-user" onClick={() => setSidebarOpen(false)} className={({ isActive }) =>
-                        `flex items-center gap-3 px-2 py-1 rounded-md transition duration-200 ${
-                            isActive
-                                ? 'text-yellow-400 border-l-4 border-yellow-400 bg-[#1a1a1a]'
-                                : 'text-gray-300 hover:text-yellow-400'
+                        `flex items-center gap-3 px-2 py-1 rounded-md transition duration-200 ${isActive
+                            ? 'text-yellow-400 border-l-4 border-yellow-400 bg-[#1a1a1a]'
+                            : 'text-gray-300 hover:text-yellow-400'
                         }`
                     }>
                         <FaUsers /> Manage Users
                     </NavLink>
 
                     <NavLink to="make/announcement" onClick={() => setSidebarOpen(false)} className={({ isActive }) =>
-                        `flex items-center gap-3 px-2 py-1 rounded-md transition duration-200 ${
-                            isActive
-                                ? 'text-yellow-400 border-l-4 border-yellow-400 bg-[#1a1a1a]'
-                                : 'text-gray-300 hover:text-yellow-400'
+                        `flex items-center gap-3 px-2 py-1 rounded-md transition duration-200 ${isActive
+                            ? 'text-yellow-400 border-l-4 border-yellow-400 bg-[#1a1a1a]'
+                            : 'text-gray-300 hover:text-yellow-400'
                         }`
                     }>
                         <FaBullhorn /> Make Announcement
                     </NavLink>
+                    <NavLink
+                        to="profile"
+                        onClick={() => setSidebarOpen(false)}
+                        title="My Profile"
+                        className={({ isActive }) =>
+                            `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition duration-200 ${isActive
+                                ? 'text-yellow-400 border-l-4 border-yellow-400 bg-[#1a1a1a]'
+                                : 'text-gray-300 hover:text-yellow-400 hover:bg-[#2a2a2a]'
+                            }`
+                        }
+                    >
+                        <FaUserCircle className="text-xl" /> Profile
+                    </NavLink>
 
                     <NavLink to="settings" onClick={() => setSidebarOpen(false)} className={({ isActive }) =>
-                        `flex items-center gap-3 px-2 py-1 rounded-md transition duration-200 ${
-                            isActive
-                                ? 'text-yellow-400 border-l-4 border-yellow-400 bg-[#1a1a1a]'
-                                : 'text-gray-300 hover:text-yellow-400'
+                        `flex items-center gap-3 px-2 py-1 rounded-md transition duration-200 ${isActive
+                            ? 'text-yellow-400 border-l-4 border-yellow-400 bg-[#1a1a1a]'
+                            : 'text-gray-300 hover:text-yellow-400'
                         }`
                     }>
                         <FaCogs /> Settings

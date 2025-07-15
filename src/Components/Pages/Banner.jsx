@@ -42,7 +42,7 @@ const Banner = ({ user }) => {
 
   // Vote handler
   const postVote = async (postId, voteType) => {
-    console.log(postId);
+    // console.log(postId);
     
     if (!user?.email) {
       alert("Please login to vote!");

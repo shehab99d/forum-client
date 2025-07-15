@@ -17,7 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const Navbar = () => {
     const { user, logout } = useContext(AuthContext);
-    console.log(user);
+    // console.log(user);
 
     const [isAdmin, isAdminLoading] = useAdmin();
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../Hooks/useAxiosSecure';
@@ -7,6 +7,7 @@ import Loading from '../../../Loading/Loading';
 
 const ManageUser = () => {
     const axiosSecure = useAxiosSecure();
+    const [searchText, setSearchText] = useState('');
 
     const { data: users = [], refetch, isLoading } = useQuery({
         queryKey: ['all-users'],
@@ -35,7 +36,7 @@ const ManageUser = () => {
                     refetch();
                 }
             } catch (error) {
-                console.log(error);
+                // console.log(error);
                 Swal.fire('Failed!', 'Something went wrong.', 'error');
             }
         }
@@ -66,12 +67,30 @@ const ManageUser = () => {
         return <Loading />;
     }
 
+    // 🔍 ফিল্টার করা ইউজার লিস্ট (নিচে টেবিলে দেখাবে)
+    const filteredUsers = users.filter(user =>
+        (user.name || user.displayName || '')
+            .toLowerCase()
+            .includes(searchText.toLowerCase())
+    );
+
     return (
         <div className="p-4 md:p-8 bg-gradient-to-b from-gray-900 to-gray-800 text-white rounded-xl shadow-xl">
-            <h2 className="text-4xl font-bold mb-8 flex items-center gap-3 text-yellow-400">
+            <h2 className="text-4xl font-bold mb-6 flex items-center gap-3 text-yellow-400">
                 <FaUserShield className="text-yellow-400 text-3xl" />
                 Manage Users
             </h2>
+
+            {/* 🔍 Search Box */}
+            <div className="mb-6">
+                <input
+                    type="text"
+                    placeholder="Search by user name..."
+                    className="input input-bordered w-full md:w-1/3 text-white"
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                />
+            </div>
 
             <div className="overflow-x-auto rounded-lg border border-gray-700 shadow-inner">
                 <table className="table w-full">
@@ -85,49 +104,59 @@ const ManageUser = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map((user, index) => (
-                            <tr
-                                key={user._id}
-                                className="hover:bg-gray-700 transition duration-300"
-                            >
-                                <td className="py-3 px-4">{index + 1}</td>
-                                <td className="py-3 px-4">{user.name || user.displayName || 'N/A'}</td>
-                                <td className="py-3 px-4">{user.email}</td>
-                                <td className="py-3 px-4">
-                                    <span
-                                        className={`px-3 py-1 text-xs font-bold rounded-full 
-                                            ${user.role === 'admin'
-                                                ? 'bg-green-700 text-white'
-                                                : 'bg-yellow-600 text-white'
-                                            }`}
-                                    >
-                                        {user.role || 'user'}
-                                    </span>
-                                </td>
-                                <td className="py-3 px-4 text-center space-x-2">
-                                    {user.role === 'admin' ? (
-                                        <button className="btn btn-sm btn-disabled bg-gray-600 text-gray-300 cursor-not-allowed">
-                                            Already Admin
-                                        </button>
-                                    ) : (
-                                        <button
-                                            onClick={() => handleMakeAdmin(user.email)}
-                                            className="btn btn-sm btn-outline btn-warning"
-                                        >
-                                            Make Admin
-                                        </button>
-                                    )}
-                                    {user.role === 'admin' && (
-                                        <button
-                                            onClick={() => handleDelete(user.email)}
-                                            className="btn btn-sm btn-error"
-                                        >
-                                            Remove Admin
-                                        </button>
-                                    )}
+                        {filteredUsers.length === 0 ? (
+                            <tr>
+                                <td colSpan="5" className="text-center text-gray-400 py-8">
+                                    No users found.
                                 </td>
                             </tr>
-                        ))}
+                        ) : (
+                            filteredUsers.map((user, index) => (
+                                <tr
+                                    key={user._id}
+                                    className="hover:bg-gray-700 transition duration-300"
+                                >
+                                    <td className="py-3 px-4">{index + 1}</td>
+                                    <td className="py-3 px-4">
+                                        {user.name || user.displayName || 'N/A'}
+                                    </td>
+                                    <td className="py-3 px-4">{user.email}</td>
+                                    <td className="py-3 px-4">
+                                        <span
+                                            className={`px-3 py-1 text-xs font-bold rounded-full 
+                                            ${user.role === 'admin'
+                                                    ? 'bg-green-700 text-white'
+                                                    : 'bg-yellow-600 text-white'
+                                                }`}
+                                        >
+                                            {user.role || 'user'}
+                                        </span>
+                                    </td>
+                                    <td className="py-3 px-4 text-center space-x-2">
+                                        {user.role === 'admin' ? (
+                                            <button className="btn btn-sm btn-disabled bg-gray-600 text-gray-300 cursor-not-allowed">
+                                                Already Admin
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() => handleMakeAdmin(user.email)}
+                                                className="btn btn-sm btn-outline btn-warning"
+                                            >
+                                                Make Admin
+                                            </button>
+                                        )}
+                                        {user.role === 'admin' && (
+                                            <button
+                                                onClick={() => handleDelete(user.email)}
+                                                className="btn btn-sm btn-error"
+                                            >
+                                                Remove Admin
+                                            </button>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
             </div>

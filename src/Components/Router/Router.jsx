@@ -19,6 +19,7 @@ import ManageUser from "../Pages/AdminDashboard/ManageUser";
 import MakeAnnouncement from "../Pages/AdminDashboard/MakeAnnouncement";
 import Setting from "../Pages/AdminDashboard/Setting";
 import AboutMe from "../Pages/AboutMe";
+import AdminProfile from "../Pages/AdminDashboard/AdminProfile";
 // import Payment from "../../Payment";
 
 export const router = createBrowserRouter([
@@ -101,6 +102,10 @@ export const router = createBrowserRouter([
             {
                 path: 'settings',
                 element: <Setting></Setting>
+            },
+            {
+                path: 'profile',
+                element: <AdminProfile></AdminProfile>
             }
         ]
     },

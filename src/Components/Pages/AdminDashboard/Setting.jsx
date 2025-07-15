@@ -2,6 +2,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../Hooks/useAxiosSecure';
+import AddTags from './AddTags';
 
 const Setting = () => {
     const axiosSecure = useAxiosSecure();
@@ -123,6 +124,7 @@ const Setting = () => {
                     </tbody>
                 </table>
             </div>
+            <AddTags></AddTags>
         </div>
     );
 };
