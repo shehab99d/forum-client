@@ -74,7 +74,7 @@ const Banner = ({ user }) => {
   };
 
   return (
-    <div className="relative rounded-3xl shadow-2xl overflow-hidden lg:mt-28">
+    <div className="relative rounded-3xl shadow-2xl overflow-hidden lg:mt-28 md:mt-28 mt-28">
       {/* Background Image */}
       <div
         className="absolute inset-0 z-0"

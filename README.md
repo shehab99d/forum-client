@@ -8,7 +8,7 @@ Admin features allow user management, comment moderation, and banning misbehavin
 
 ## 🚀 Live Site
 
-🔗 [Visit Forumify Live](https://your-deployment-link.vercel.app)
+🔗 [Visit Forumify Live](https://forum-client-334cf.web.app)
 
 ---
 

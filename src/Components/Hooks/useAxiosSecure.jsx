@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 const axiosSecure = axios.create({
-    baseURL: 'http://localhost:5000/',
+    
+    baseURL: 'https://forum-serve.vercel.app',
+    // baseURL: 'http://localhost:5000',
     headers: {
         'Content-Type': 'application/json',
     },

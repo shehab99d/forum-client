@@ -14,6 +14,7 @@ import { AuthContext } from "../Router/Authentication/AuthContext";
 import useAdmin from "../Hooks/useAdmin";
 import useAxiosSecure from "../Hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
+// import useAxios from "../Hooks/useAxios";
 
 const Navbar = () => {
     const { user, logout } = useContext(AuthContext);
@@ -203,11 +204,16 @@ const Navbar = () => {
                                 <div className="flex flex-col gap-2">
                                     <div className="avatar online cursor-pointer">
                                         <div className="w-10 rounded-full ring ring-yellow-400 ring-offset-base-100 ring-offset-2">
-                                            <img src={user.photo} alt="user" />
+                                            <img src={user.photoURL} alt="user" />
                                         </div>
                                     </div>
                                     <p className="text-sm font-bold text-yellow-400">{user.name}</p>
                                     <Link to="/dashboard">Dashboard</Link>
+                                    <NavLink to="/about-me">
+                                      
+                                            About Me
+                                        
+                                    </NavLink>
                                     {
                                         !isAdminLoading && isAdmin && (<Link to="/admin">Admin Dashboard</Link>)
                                     }

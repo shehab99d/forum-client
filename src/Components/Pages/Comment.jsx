@@ -86,7 +86,7 @@ const Comment = () => {
 
 
   return (
-    <div className="bg-white p-6 lg:my-52 rounded-2xl shadow-lg mt-20 max-w-6xl mx-auto w-full">
+    <div className="bg-white p-6 lg:my-52 rounded-2xl lg:mt-44 md:mt-36 mt-32 shadow-lg mt-20 max-w-6xl mx-auto w-full">
       <h3 className="text-3xl font-bold mb-6 text-gray-800 text-center">🚩 Comments Management</h3>
 
       <div className="overflow-x-auto rounded-lg">

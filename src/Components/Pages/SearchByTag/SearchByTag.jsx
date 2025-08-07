@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import useAxiosSecure from '../../Hooks/useAxiosSecure';
+// import useAxiosSecure from '../../Hooks/useAxiosSecure';
 import { motion } from 'framer-motion';
 import { MdOutlineSearchOff } from 'react-icons/md';
 import Select from 'react-select';
+import useAxios from '../../Hooks/useAxios';
 
 const SearchByTag = () => {
-  const axiosSecure = useAxiosSecure();
+  const axiosSecure = useAxios();
 
   const [selectedTag, setSelectedTag] = useState(null);
   const [posts, setPosts] = useState([]);

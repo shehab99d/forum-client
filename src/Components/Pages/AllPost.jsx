@@ -3,7 +3,7 @@ import moment from 'moment';
 import { FaComment } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import useAxiosSecure from '../Hooks/useAxiosSecure';
+// import useAxiosSecure from '../Hooks/useAxiosSecure';
 import useAuth from '../Hooks/useAuth';
 import VoteButtons from './VoteButtons';
 
@@ -16,6 +16,8 @@ import {
   TwitterIcon
 } from 'react-share';
 import Swal from 'sweetalert2';
+import useAxios from '../Hooks/useAxios';
+
 
 const AllPosts = () => {
   const [posts, setPosts] = useState([]);
@@ -24,7 +26,7 @@ const AllPosts = () => {
   const [totalPosts, setTotalPosts] = useState(0);
   const postsPerPage = 5;
 
-  const axiosSecure = useAxiosSecure();
+  const axiosSecure = useAxios();
   const { user } = useAuth();
   const [commentCounts, setCommentCounts] = useState({});
 

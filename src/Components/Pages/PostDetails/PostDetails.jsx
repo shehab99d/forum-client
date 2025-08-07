@@ -169,12 +169,14 @@ const PostDetails = () => {
               {user?.email === comment.commenterEmail && (
                 <button
                   onClick={() => handleDeleteComment(comment._id)}
-                  className="absolute top-2 right-2 text-red-600 hover:text-red-800 font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300 lg:pt-8"
+                  className="absolute top-2 right-2 text-red-600 hover:text-red-800 font-bold 
+  opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300 lg:pt-8 md:pt-8 pt-8"
                   title="Delete Comment"
                   aria-label="Delete Comment"
                 >
                   &#x2716;
                 </button>
+
               )}
             </div>
           ))}
