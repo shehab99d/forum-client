@@ -4,6 +4,11 @@ import Banner from './Banner';
 import SearchByTag from './SearchByTag/SearchByTag';
 import Announcement from './Announcement/Announcement';
 import AllPosts from './AllPost';
+import CommunityRules from '../CommunityRules';
+import RatingSection from '../RatingSection';
+import ForumTestimonials from '../TstimolialRating';
+import PopularCategories from '../PopularCategories.JSX';
+import NewsletterSubscription from '../NewsletterSubscription';
 
 const Home = () => {
     return (
@@ -21,6 +26,11 @@ const Home = () => {
 
                     <Announcement></Announcement>
                     <AllPosts></AllPosts>
+                    <CommunityRules></CommunityRules>
+                    {/* <RatingSection></RatingSection> */}
+                    <ForumTestimonials></ForumTestimonials>
+                    <PopularCategories></PopularCategories>
+                    <NewsletterSubscription></NewsletterSubscription>
                 </div>
             </div>
         </div>

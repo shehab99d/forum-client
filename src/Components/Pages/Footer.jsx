@@ -43,10 +43,10 @@ const Footer = () => {
         <div>
           <h3 className="text-xl font-semibold text-white mb-4">Connect with Us</h3>
           <div className="flex gap-4 text-lg">
-            <a href="#" className="hover:text-[#1877f2] transition-all"><FaFacebookF /></a>
-            <a href="#" className="hover:text-[#1DA1F2] transition-all"><FaTwitter /></a>
-            <a href="#" className="hover:text-[#e1306c] transition-all"><FaInstagram /></a>
-            <a href="#" className="hover:text-[#0077b5] transition-all"><FaLinkedinIn /></a>
+            <a href="https://www.facebook.com/Shihab2975" className="hover:text-[#1877f2] transition-all"><FaFacebookF /></a>
+            <a href="https://x.com/shehab55755" className="hover:text-[#1DA1F2] transition-all"><FaTwitter /></a>
+            <a href="https://www.instagram.com/code__hub_69/" className="hover:text-[#e1306c] transition-all"><FaInstagram /></a>
+            <a href="https://www.linkedin.com/in/shehabul-islam/" className="hover:text-[#0077b5] transition-all"><FaLinkedinIn /></a>
           </div>
         </div>
       </div>

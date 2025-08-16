@@ -20,6 +20,7 @@ import MakeAnnouncement from "../Pages/AdminDashboard/MakeAnnouncement";
 import Setting from "../Pages/AdminDashboard/Setting";
 import AboutMe from "../Pages/AboutMe";
 import AdminProfile from "../Pages/AdminDashboard/AdminProfile";
+import AboutUs from "../Pages/AboutUs";
 // import Payment from "../../Payment";
 
 export const router = createBrowserRouter([
@@ -112,5 +113,9 @@ export const router = createBrowserRouter([
     {
         path: '*',
         element: <ErrorPage></ErrorPage>
+    },
+    {
+        path: 'aboutUs',
+        element: <AboutUs></AboutUs>
     }
 ])
