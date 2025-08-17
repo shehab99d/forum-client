@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import useAxiosSecure from '../Hooks/useAxiosSecure';
 import { motion } from 'framer-motion';
-import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import { FaArrowUp, FaArrowDown, FaSearch, FaRegCommentDots, FaUserCircle, FaCalendarAlt } from 'react-icons/fa';
 
 const Banner = ({ user }) => {
   const [tag, setTag] = useState('');
@@ -42,8 +42,6 @@ const Banner = ({ user }) => {
 
   // Vote handler
   const postVote = async (postId, voteType) => {
-    // console.log(postId);
-    
     if (!user?.email) {
       alert("Please login to vote!");
       return;
@@ -52,18 +50,16 @@ const Banner = ({ user }) => {
     try {
       const res = await axiosSecure.patch(`/posts/${postId}/vote`, {
         userEmail: user.email,
-        voteType, // 'upvote' or 'downvote' or 'remove' (if you want to support removing vote)
+        voteType,
       });
 
-      // Update only the specific post's upvotes/downvotes in the state without refetching all
       setSearchResults(prevPosts =>
         prevPosts.map(post =>
           post._id === postId
             ? {
                 ...post,
-                upvote: res.data.upvotedBy,
-                downvote: res.data.downvotedBy,
-                // Optionally update who voted, if you want to track
+                upvotedBy: res.data.upvotedBy,
+                downvotedBy: res.data.downvotedBy,
               }
             : post
         )
@@ -87,7 +83,7 @@ const Banner = ({ user }) => {
       ></div>
 
       {/* Black Overlay */}
-      <div className="absolute inset-0 bg-black/40 bg-opacity-60 z-0"></div>
+      <div className="absolute inset-0 bg-black/50 z-0"></div>
 
       {/* Foreground Content */}
       <div className="relative z-10 px-4 py-20 md:py-28 text-white max-w-7xl mx-auto text-center">
@@ -145,9 +141,9 @@ const Banner = ({ user }) => {
           />
           <button
             onClick={handleSearch}
-            className="btn bg-yellow-500 hover:bg-yellow-600 text-black font-semibold text-lg px-8 py-3 rounded-full transition-all shadow-lg w-full sm:w-auto"
+            className="btn bg-yellow-500 hover:bg-yellow-600 text-black font-semibold text-lg px-8 py-3 rounded-full transition-all shadow-lg w-full sm:w-auto flex items-center gap-2"
           >
-            🔍 Search
+            <FaSearch /> Search
           </button>
         </motion.div>
 
@@ -170,22 +166,39 @@ const Banner = ({ user }) => {
                 <motion.div
                   key={post._id}
                   whileHover={{ scale: 1.03 }}
-                  className="bg-white/10 border border-white/20 backdrop-blur-md p-8 rounded-xl shadow-xl transition-all"
+                  className="bg-white/10 border border-white/20 backdrop-blur-md p-6 rounded-xl shadow-xl transition-all flex flex-col justify-between"
                 >
-                  <h3 className="text-2xl md:text-3xl font-bold text-yellow-300 mb-3">
-                    {post.title}
-                  </h3>
-                  <p className="text-gray-200 mb-4 text-base md:text-lg">
-                    {post.description.slice(0, 100)}...
-                  </p>
-                  <p className="text-sm text-pink-300 mb-3"># {post.tag}</p>
-                  <div className="text-sm text-indigo-200 flex flex-wrap items-center justify-between mt-3">
-                    <span>By: {post.authorName}</span>
-                    <span className="flex items-center gap-3">
-                     <FaArrowUp className="text-green-400" /> {post.upvotedBy?.length || 0}
-<FaArrowDown className="text-red-400 ml-2" /> {post.downvotedBy?.length || 0}
+                  <div>
+                    <h3 className="text-2xl md:text-3xl font-bold text-yellow-300 mb-3">
+                      {post.title}
+                    </h3>
+                    <p className="text-gray-200 mb-4 text-base md:text-lg">
+                      {post.description.slice(0, 120)}...
+                    </p>
+                    <p className="text-sm text-pink-300 mb-3"># {post.tag}</p>
+                  </div>
 
-                    </span>
+                  <div className="text-sm text-indigo-200 flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <FaUserCircle /> <span>{post.authorName}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <FaCalendarAlt /> <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between mt-4 pt-3 border-t border-white/20">
+                    <div className="flex items-center gap-4">
+                      <button onClick={() => postVote(post._id, 'upvote')} className="flex items-center gap-1 text-green-400 hover:scale-110 transition">
+                        <FaArrowUp /> {post.upvotedBy?.length || 0}
+                      </button>
+                      <button onClick={() => postVote(post._id, 'downvote')} className="flex items-center gap-1 text-red-400 hover:scale-110 transition">
+                        <FaArrowDown /> {post.downvotedBy?.length || 0}
+                      </button>
+                    </div>
+                    <div className="flex items-center gap-2 text-cyan-300">
+                      <FaRegCommentDots /> {post.commentsCount || 0}
+                    </div>
                   </div>
                 </motion.div>
               ))}

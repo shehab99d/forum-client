@@ -4,11 +4,7 @@ import { AuthContext } from '../Router/Authentication/AuthContext';
 import { FcGoogle } from 'react-icons/fc';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Swal from 'sweetalert2';
-// import useAxiosSecure from '../../Hooks/useAxiosSecure'; // ✅ path check
 import useAxiosSecure from '../Hooks/useAxiosSecure';
-
-
-
 
 const JoinUs = () => {
     const [showLogin, setShowLogin] = useState(false);
@@ -16,6 +12,9 @@ const JoinUs = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [phone, setPhone] = useState('');
+    const [address, setAddress] = useState('');
+
     const [loginEmail, setLoginEmail] = useState('');
     const [loginPassword, setLoginPassword] = useState('');
 
@@ -26,13 +25,15 @@ const JoinUs = () => {
     const from = location.state?.from?.pathname || '/';
 
     // ✅ Save user to DB
-    const saveUserToDB = async (user) => {
+    const saveUserToDB = async (user, phone = '', address = '') => {
         const userInfo = {
             name: user.displayName,
             email: user.email,
             photo: user.photoURL,
             role: 'user',
-            isMember: false
+            isMember: false,
+            phone,
+            address
         };
 
         try {
@@ -49,7 +50,6 @@ const JoinUs = () => {
             const res = await axiosSecure.post('/login', { email, password });
             const token = res.data.token;
             localStorage.setItem('authToken', token);
-            // console.log("✅ Token saved");
         } catch (err) {
             console.error("❌ Token fetch failed:", err.message);
         }
@@ -80,13 +80,11 @@ const JoinUs = () => {
                 displayName: name,
                 photoURL: selectedFile ? URL.createObjectURL(selectedFile) : ''
             });
-            // console.log(updateUserProfile);
-
 
             result.user.displayName = name;
             result.user.photoURL = selectedFile ? URL.createObjectURL(selectedFile) : '';
 
-            await saveUserToDB(result.user);
+            await saveUserToDB(result.user, phone, address);
             await fetchAndStoreToken(email, password);
             Swal.fire({ icon: 'success', title: 'Account Created!' });
             navigate(from, { replace: true });
@@ -95,8 +93,6 @@ const JoinUs = () => {
             Swal.fire({ icon: 'error', title: 'Registration Failed', text: err.message });
         }
     };
-
-
 
     // ✅ Login User
     const handleLogin = async (e) => {
@@ -122,12 +118,18 @@ const JoinUs = () => {
 
                 {/* Registration Form */}
                 {!showLogin && (
-                    <div className="w-full md:w-1/2 p-10">
+                    <div className="w-full md:w-1/2 p-10 pb-5">
                         <h2 className="text-3xl font-bold text-center mb-6 text-blue-700">Create Account</h2>
                         <form onSubmit={handleRegister} className="space-y-4">
                             <input onChange={(e) => setName(e.target.value)} type="text" required placeholder="Full Name" className="input w-full bg-white text-black border border-gray-300" />
                             <input onChange={(e) => setEmail(e.target.value)} type="email" required placeholder="Email" className="input w-full bg-white text-black border border-gray-300" />
                             <input onChange={(e) => setPassword(e.target.value)} type="password" required placeholder="Password" className="input w-full bg-white text-black border border-gray-300" />
+
+                            {/* Phone Number */}
+                            <input onChange={(e) => setPhone(e.target.value)} type="tel" required placeholder="Phone Number" className="input w-full bg-white text-black border border-gray-300" />
+
+                            {/* Address */}
+                            <input onChange={(e) => setAddress(e.target.value)} type="text" required placeholder="Address" className="input w-full bg-white text-black border border-gray-300" />
 
                             <div>
                                 <label className="block mb-1 text-sm font-medium text-gray-700">Upload Profile Picture</label>
@@ -149,12 +151,14 @@ const JoinUs = () => {
                         </form>
 
                         <div className="divider text-black before:bg-black after:bg-black">OR</div>
-                        <button
-                            onClick={handleGoogleLogin}
-                            className="btn w-full border border-gray-300 bg-white text-black hover:bg-gray-100 rounded-full"
-                        >
-                            <FcGoogle className="text-2xl mr-2" /> Continue with Google
-                        </button>
+                        <div className=''>
+                            <button
+                                onClick={handleGoogleLogin}
+                                className="btn w-full border border-gray-300 bg-white text-black hover:bg-gray-100 rounded-full"
+                            >
+                                <FcGoogle className="text-2xl mr-2" /> Continue with Google
+                            </button>
+                        </div>
                     </div>
                 )}
 
